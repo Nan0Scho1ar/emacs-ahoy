@@ -18,8 +18,9 @@ Doom Emacs:
 #+begin_src emacs-lisp :tangle config.el
 (use-package! ahoy
   :config
-  (map! :leader :desc "Ahoy run cmd" "p A A" #'ahoy)
-  (map! :leader :desc "Ahoy run with args" "p A a" #'ahoy-run-with-args)
-  (map! :leader :desc "Ahoy help" "p A h" #'ahoy-help)
-  (map! :mode ahoy-mode :n "q" #'delete-window))
+  (map! :mode ahoy-mode :n "q" #'delete-window)
+  (map! :leader (:prefix ("p A" . "Ahoy")
+                 :desc "Ahoy run cmd"       "A" #'ahoy
+                 :desc "Ahoy run with args" "a" #'ahoy-run-with-args
+                 :desc "Ahoy help"          "h" #'ahoy-help)))
 #+end_src
