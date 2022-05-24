@@ -1,5 +1,8 @@
 #+title: Emacs Ahoy
 ** Run ahoy commands from within emacs
+Do you want the convenience of [[https://github.com/ahoy-cli/ahoy][ahoy]], but also love the convenience of Emacs?
+Then this is the package for you!
+
 This package offers three commands
 - ~ahoy~: Prompts you to select an ahoy command then executes it.
 - ~ahoy-run-with-args~: Prompts you to select an ahoy command, Prompts for args, then executes the command.
