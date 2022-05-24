@@ -18,6 +18,10 @@
 ;;
 ;;; Code:
 
+(define-derived-mode ahoy-mode
+  fundamental-mode "Ahoy"
+  "Major mode for ahoy.")
+
 (defun ahoy-cmds ()
   "Run ahoy in the current directory and return a list of possible commands."
   (let ((cmd-str (shell-command-to-string "ahoy --generate-bash-completion")))
@@ -28,9 +32,19 @@
   "Promp the user to choose a command."
   (completing-read "AHOY: " (ahoy-cmds)))
 
+(defun ahoy-get-buffer-create (name)
+  "Fetch or create an appropriate buffer NAME for an ahoy command."
+  (with-current-buffer (get-buffer-create name)
+    (erase-buffer)
+    (split-window nil nil 'above)
+    (switch-to-buffer name)
+    (ahoy-mode)))
+
 (defun ahoy-exec (cmd &optional args)
   "Run ahoy command CMD with arguments ARGS."
-  (shell-command (format "ahoy %s %s" cmd args)))
+  (let* ((name (format "* Ahoy %s *" cmd)))
+    (ahoy-get-buffer-create name)
+    (start-process-shell-command name name (format "ahoy %s %s" cmd args))))
 
 (defun ahoy ()
   "Promp the user to choose a command then run it."
