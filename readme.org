@@ -20,5 +20,6 @@ Doom Emacs:
   :config
   (map! :leader :desc "Ahoy run cmd" "p A A" #'ahoy)
   (map! :leader :desc "Ahoy run with args" "p A a" #'ahoy-run-with-args)
-  (map! :leader :desc "Ahoy help" "p A h" #'ahoy-help))
+  (map! :leader :desc "Ahoy help" "p A h" #'ahoy-help)
+  (map! :mode ahoy-mode :n "q" #'delete-window))
 #+end_src
