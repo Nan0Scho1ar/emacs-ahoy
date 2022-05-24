@@ -3,6 +3,8 @@
 Do you want the convenience of [[https://github.com/ahoy-cli/ahoy][ahoy]], but also love the convenience of Emacs?
 Then this is the package for you!
 
+Depends on package [[https://github.com/nan0Scho1ar/emacs-ansi-exec][ansi-exec.]]
+
 This package offers three commands
 - ~ahoy~: Prompts you to select an ahoy command then executes it.
 - ~ahoy-run-with-args~: Prompts you to select an ahoy command, Prompts for args, then executes the command.
@@ -12,15 +14,17 @@ This package offers three commands
 Doom Emacs:
 - Add the following to your ~packages.el~
 #+begin_src emacs-lisp :tangle packages.el
+(package! ansi-exec :recipe (:host github :repo "nan0scho1ar/emacs-ansi-exec" :files ("*.el")))
 (package! ahoy :recipe (:host github :repo "nan0scho1ar/emacs-ahoy" :files ("*.el")))
 #+end_src
 - Add the following to your ~config.el~
 #+begin_src emacs-lisp :tangle config.el
-(use-package! ahoy
-  :config
-  (map! :mode ahoy-mode :n "q" #'delete-window)
-  (map! :leader (:prefix ("p A" . "Ahoy")
-                 :desc "Ahoy run cmd"       "A" #'ahoy
-                 :desc "Ahoy run with args" "a" #'ahoy-run-with-args
-                 :desc "Ahoy help"          "h" #'ahoy-help)))
+(after! ansi-exec
+  (use-package! ahoy
+    :config
+    (map! :mode ahoy-mode :n "q" #'delete-window)
+    (map! :leader (:prefix ("p A" . "Ahoy")
+                   :desc "Ahoy run cmd"       "A" #'ahoy
+                   :desc "Ahoy run with args" "a" #'ahoy-run-with-args
+                   :desc "Ahoy help"          "h" #'ahoy-help))))
 #+end_src
