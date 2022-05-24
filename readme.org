@@ -1,0 +1,22 @@
+#+title: Emacs Ahoy
+* Emacs Ahoy
+** Run ahoy commands from within emacs
+This package offers three commands
+- ~ahoy~: Prompts you to select an ahoy command then executes it.
+- ~ahoy-run-with-args~: Prompts you to select an ahoy command, Prompts for args, then executes the command.
+- ~ahoy-help~: Prompts you to select an ahoy command then returns it's help text.
+
+*** Installation
+Doom Emacs:
+- Add the following to your ~packages.el~
+#+begin_src emacs-lisp :tangle packages.el
+(package! ahoy :recipe (:host github :repo "nan0scho1ar/ahoy" :files ("*.el")))
+#+end_src
+- Add the following to your ~config.el~
+#+begin_src emacs-lisp :tangle config.el
+(use-package! ahoy
+  :config
+  (map! :leader :desc "Ahoy run cmd" "p A A" #'ahoy)
+  (map! :leader :desc "Ahoy run with args" "p A a" #'ahoy-run-with-args)
+  (map! :leader :desc "Ahoy help" "p A h" #'ahoy-help))
+#+end_src
