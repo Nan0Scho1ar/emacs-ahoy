@@ -17,10 +17,53 @@
 ;; Run ahoy commands fron within Emacs.
 ;;
 ;;; Code:
+(require 'ansi-color)
 
 (define-derived-mode ahoy-mode
   fundamental-mode "Ahoy"
   "Major mode for ahoy.")
+
+(defun ahoy-build-control-sequence-regexp (regexps)
+  "Build control sequence regexp from list of REGEXPS."
+  (mapconcat (lambda (regexp)
+               (concat "\\(?:" regexp "\\)"))
+             regexps "\\|"))
+
+(defvar ahoy-non-sgr-control-sequence-regexp
+      (ahoy-build-control-sequence-regexp
+       '(;; icon name escape sequences
+         "\033\\][0-2];.*?\007"
+         ;; non-SGR CSI escape sequences
+         "\033\\[\\??[0-9;]*[^0-9;m]"
+         ;; noop
+         "\012\033\\[2K\033\\[1F"
+         ;; tput sgr0
+         "\033(B"
+         ))
+     "Regexps which matches non-SGR control sequences.")
+
+(defun ahoy-filter-non-sgr-control-sequences-in-region (begin end)
+  (save-excursion
+    (goto-char begin)
+    (while
+        (re-search-forward ahoy-non-sgr-control-sequence-regexp end t)
+      (replace-match ""))))
+
+(defun ahoy-exec (cmd &optional args)
+  "Run ahoy command CMD with arguments ARGS."
+  (let ((buffer (get-buffer-create (format "* Ahoy %s *" cmd))))
+    (when args (setq cmd (format "%s %s" cmd args)))
+    (with-current-buffer buffer (erase-buffer) (ahoy-mode))
+    (make-process :name "ahoy"
+                  :buffer buffer
+                  :command (list "bash" "-c" (format "TERM=xterm ahoy %s" cmd))
+                  :noquery t
+                  :sentinel (lambda (proc _event)
+                              (when (memq (process-status proc) '(exit signal))
+                                (with-current-buffer (process-buffer proc)
+                                  (ansi-color-apply-on-region (point-min) (point-max))
+                                  (ahoy-filter-non-sgr-control-sequences-in-region (point-min) (point-max)))
+                                (pop-to-buffer (process-buffer proc)))))))
 
 (defun ahoy-cmds ()
   "Run ahoy in the current directory and return a list of possible commands."
@@ -31,20 +74,6 @@
 (defun ahoy-select-cmd ()
   "Promp the user to choose a command."
   (completing-read "AHOY: " (ahoy-cmds)))
-
-(defun ahoy-get-buffer-create (name)
-  "Fetch or create an appropriate buffer NAME for an ahoy command."
-  (with-current-buffer (get-buffer-create name)
-    (erase-buffer)
-    (split-window nil nil 'above)
-    (switch-to-buffer name)
-    (ahoy-mode)))
-
-(defun ahoy-exec (cmd &optional args)
-  "Run ahoy command CMD with arguments ARGS."
-  (let* ((name (format "* Ahoy %s *" cmd)))
-    (ahoy-get-buffer-create name)
-    (start-process-shell-command name name (format "ahoy %s %s" cmd args))))
 
 (defun ahoy ()
   "Promp the user to choose a command then run it."
