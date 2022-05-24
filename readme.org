@@ -9,7 +9,7 @@ This package offers three commands
 Doom Emacs:
 - Add the following to your ~packages.el~
 #+begin_src emacs-lisp :tangle packages.el
-(package! ahoy :recipe (:host github :repo "nan0scho1ar/ahoy" :files ("*.el")))
+(package! ahoy :recipe (:host github :repo "nan0scho1ar/emacs-ahoy" :files ("*.el")))
 #+end_src
 - Add the following to your ~config.el~
 #+begin_src emacs-lisp :tangle config.el
