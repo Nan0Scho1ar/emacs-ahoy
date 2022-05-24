@@ -1,5 +1,4 @@
 #+title: Emacs Ahoy
-* Emacs Ahoy
 ** Run ahoy commands from within emacs
 This package offers three commands
 - ~ahoy~: Prompts you to select an ahoy command then executes it.
